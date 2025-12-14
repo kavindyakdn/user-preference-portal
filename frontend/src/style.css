@@ -1,5 +1,6 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 }
@@ -19,4 +20,10 @@ body {
 #app {
   width: 100%;
   min-height: 100vh;
+}
+
+.webix_view {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
