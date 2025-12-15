@@ -6,7 +6,7 @@ def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
     django.setup()
 
-    from users.models import User, UserNotificationSettings
+    from users.models import User, UserNotificationSettings, UserThemeSettings
 
     obj, created = User.objects.get_or_create(
         email="demo@example.com",
@@ -36,6 +36,20 @@ def main():
         print("Created notification settings for user:", obj.email)
     else:
         print("Notification settings already exist for user:", obj.email)
+    
+    # Create theme settings for the user
+    theme_settings, theme_created = UserThemeSettings.objects.get_or_create(
+        user=obj,
+        defaults={
+            'skin': 'material',
+            'primary_color': '#4b7bec',
+            'font_family': 'system',
+        }
+    )
+    if theme_created:
+        print("Created theme settings for user:", obj.email)
+    else:
+        print("Theme settings already exist for user:", obj.email)
 
 
 if __name__ == "__main__":

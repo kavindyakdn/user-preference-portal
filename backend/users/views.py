@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
-from .models import User, UserNotificationSettings
+from .models import User, UserNotificationSettings, UserThemeSettings
 
 
 def get_user(request, pk: int):
@@ -139,5 +139,77 @@ def update_notification_settings(request, pk: int):
         "email_news": settings.email_news,
         "email_messages": settings.email_messages,
         "email_reminders": settings.email_reminders,
+    }
+    return JsonResponse(data)
+
+
+def get_theme_settings(request, pk: int):
+    """Get theme settings for a user by user ID."""
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+    
+    # Get or create theme settings
+    settings, created = UserThemeSettings.objects.get_or_create(
+        user=user,
+        defaults={
+            'skin': 'material',
+            'primary_color': '#4b7bec',
+            'font_family': 'system',
+        }
+    )
+    
+    data = {
+        "user_id": settings.user.id,
+        "skin": settings.skin,
+        "primary_color": settings.primary_color,
+        "font_family": settings.font_family,
+    }
+    return JsonResponse(data)
+
+
+def update_theme_settings(request, pk: int):
+    """
+    Update theme settings for a user by user ID.
+    Expects JSON body with any of: skin, primary_color, font_family.
+    """
+    if request.method not in ("PUT", "PATCH", "POST"):
+        return HttpResponseBadRequest("Unsupported method")
+
+    try:
+        body = request.body.decode() or "{}"
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+    
+    # Get or create theme settings
+    settings, created = UserThemeSettings.objects.get_or_create(
+        user=user,
+        defaults={
+            'skin': 'material',
+            'primary_color': '#4b7bec',
+            'font_family': 'system',
+        }
+    )
+
+    # Update allowed fields if present
+    allowed_fields = ("skin", "primary_color", "font_family")
+    for field in allowed_fields:
+        if field in payload:
+            setattr(settings, field, payload[field])
+
+    settings.save()
+
+    data = {
+        "user_id": settings.user.id,
+        "skin": settings.skin,
+        "primary_color": settings.primary_color,
+        "font_family": settings.font_family,
     }
     return JsonResponse(data)

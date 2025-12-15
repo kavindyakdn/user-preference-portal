@@ -54,6 +54,25 @@
   border-radius: 6px;
 }
 
+/* Fix double radio button rendering issue */
+.theme-radio
+  .webix_radio_option
+  input[type="radio"] {
+  display: none !important;
+}
+
+.theme-radio .webix_radio_option {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.theme-radio
+  .webix_radio_option
+  .webix_radio_icon {
+  margin-right: 8px;
+}
+
 .theme-preview {
   padding: 16px 24px 24px;
   background: rgba(235, 232, 232, 0.02);
@@ -137,10 +156,7 @@ body[data-theme="dark"] .theme-preview-card-text {
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  background-color: var(
-    --app-primary-color,
-    #4b7bec
-  );
+  background-color: var(--app-primary-color);
   color: #fff;
 }
 

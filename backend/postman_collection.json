@@ -83,6 +83,45 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Get Theme Settings by User ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/theme/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "theme", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Theme Settings by User ID",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"skin\": \"material\",\n  \"primary_color\": \"#ff6b6b\",\n  \"font_family\": \"sans\"\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/theme/update/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "theme", "update", ""]
+        }
+      },
+      "response": []
     }
   ],
   "variable": []
