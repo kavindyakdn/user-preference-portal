@@ -7,7 +7,6 @@ export function getAccountView(webix: any) {
     id: "accountForm",
     scroll: true,
     width: 0,
-
     elements: [
       {
         view: "template",
@@ -32,6 +31,11 @@ export function getAccountView(webix: any) {
         height: 180,
         on: {
           onAfterRender: function () {
+            console.log(
+              "profile photo template rendered"
+            );
+
+            // Wire up profile photo click / upload
             const photoDiv =
               document.getElementById(
                 "profilePhoto"
@@ -100,6 +104,40 @@ export function getAccountView(webix: any) {
                 }
               );
             }
+
+            // Fetch user data from backend API and populate the form
+            console.log(
+              "loading user data from API..."
+            );
+            webix
+              .ajax()
+              .get(
+                "http://127.0.0.1:8000/api/users/1/"
+              )
+              .then((response: any) => {
+                const data = response.json();
+                console.log(
+                  "user data response",
+                  data
+                );
+                if (data) {
+                  const form = webix.$$(
+                    "accountForm"
+                  ) as any;
+                  if (form && form.setValues) {
+                    form.setValues({
+                      firstName: data.first_name,
+                      lastName: data.last_name,
+                    });
+                  }
+                }
+              })
+              .catch((err: any) => {
+                console.error(
+                  "Failed to load user data",
+                  err
+                );
+              });
           },
         },
       },

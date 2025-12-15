@@ -55,10 +55,7 @@ async function initWebix() {
               cells: [
                 {
                   id: "account",
-                  view: accountView.view,
-                  scroll: accountView.scroll,
-                  elements: accountView.elements,
-                  rules: accountView.rules,
+                  ...accountView,
                 },
                 {
                   id: "notifications",

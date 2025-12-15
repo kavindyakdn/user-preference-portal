@@ -1,0 +1,28 @@
+{
+  "info": {
+    "name": "User Preferences Portal Backend",
+    "_postman_id": "c3dfbfa5-0000-0000-0000-userprefsbackend",
+    "description": "Collection for the User Preferences Portal backend API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", ""]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": []
+}
+
+
