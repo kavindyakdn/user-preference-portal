@@ -1,10 +1,11 @@
 import "./account.css";
+import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
 
 export function getAccountView(webix: any) {
   return {
     view: "form",
-    id: "accountForm",
+    id: "account",
     scroll: true,
     width: 0,
     elements: [
@@ -111,9 +112,7 @@ export function getAccountView(webix: any) {
             );
             webix
               .ajax()
-              .get(
-                "http://127.0.0.1:8000/api/users/1/"
-              )
+              .get(`${API_BASE_URL}/users/1/`)
               .then((response: any) => {
                 const data = response.json();
                 console.log(
@@ -122,10 +121,11 @@ export function getAccountView(webix: any) {
                 );
                 if (data) {
                   const form = webix.$$(
-                    "accountForm"
+                    "account"
                   ) as any;
                   if (form && form.setValues) {
                     form.setValues({
+                      email: data.email,
                       firstName: data.first_name,
                       lastName: data.last_name,
                     });
@@ -143,6 +143,13 @@ export function getAccountView(webix: any) {
       },
       {
         view: "text",
+        label: "Email",
+        name: "email",
+        placeholder: "Enter email",
+        labelWidth: 120,
+      },
+      {
+        view: "text",
         label: "First Name",
         name: "firstName",
         placeholder: "Enter first name",
@@ -157,11 +164,38 @@ export function getAccountView(webix: any) {
       },
       getSaveButton(
         webix,
-        "accountForm",
-        "Account settings saved"
+        "account",
+        "Account settings saved",
+        (values: any) => {
+          // Call backend API to update user
+          webix
+            .ajax()
+            .headers({
+              "Content-Type": "application/json",
+            })
+            .put(
+              `${API_BASE_URL}/users/1/update/`,
+              JSON.stringify({
+                email: values.email,
+                first_name: values.firstName,
+                last_name: values.lastName,
+              })
+            )
+            .then((response: any) => {
+              const data = response.json();
+              console.log("User updated:", data);
+            })
+            .catch((err: any) => {
+              console.error(
+                "Failed to update user",
+                err
+              );
+            });
+        }
       ),
     ],
     rules: {
+      email: webix.rules.isNotEmpty,
       firstName: webix.rules.isNotEmpty,
       lastName: webix.rules.isNotEmpty,
     },

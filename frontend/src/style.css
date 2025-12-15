@@ -11,10 +11,19 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  height: 100%; /* REQUIRED for fullScreen */
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  /* min-width: 320px; */
+  /* min-height: 100vh; */
+  overflow: hidden;
 }
 
 #app {

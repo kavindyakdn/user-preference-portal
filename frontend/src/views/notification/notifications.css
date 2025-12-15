@@ -1,0 +1,33 @@
+/* Make notification section fill available width */
+.notification-section {
+  width: 100%;
+}
+
+/* Description text under each toggle */
+.notification-desc {
+  font-size: 12px;
+  color: #666;
+  padding-left: 4px;
+  margin: 2px 0 8px;
+}
+
+/* Allow long switch labels to wrap instead of truncating */
+.notification-switch-wide .webix_switch_label {
+  white-space: normal;
+}
+
+/* Ensure inner rows adapt nicely on small screens */
+@media (max-width: 600px) {
+  .notification-section .webix_layout_line {
+    flex-wrap: wrap;
+  }
+
+  .notification-section .webix_el_label {
+    width: 100% !important;
+    margin-bottom: 4px;
+  }
+
+  .notification-section .webix_el_switch {
+    justify-content: flex-start;
+  }
+}

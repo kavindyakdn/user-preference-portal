@@ -7,11 +7,11 @@ import { getPrivacyView } from "./views/privacy/privacy";
 import { getSidebar } from "./components/sidebar";
 
 // Ensure app container has proper styling
-const app = document.getElementById("app");
-if (app) {
-  app.style.width = "100%";
-  app.style.height = "100vh";
-}
+// const app = document.getElementById("app");
+// if (app) {
+//   app.style.width = "100%";
+//   app.style.height = "100vh";
+// }
 
 // Dynamically import Webix
 async function initWebix() {
@@ -54,15 +54,13 @@ async function initWebix() {
               id: "mainContent",
               cells: [
                 {
-                  id: "account",
                   ...accountView,
+                  id: "account",
                 },
                 {
+                  // Notifications page
+                  ...notificationsView,
                   id: "notifications",
-                  view: notificationsView.view,
-                  template:
-                    notificationsView.template,
-                  css: notificationsView.css,
                 },
                 {
                   id: "theme",

@@ -20,6 +20,30 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Update User by ID",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo@example.com\",\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\"\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/update/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "update", ""]
+        }
+      },
+      "response": []
     }
   ],
   "variable": []
