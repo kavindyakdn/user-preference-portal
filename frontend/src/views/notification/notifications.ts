@@ -1,5 +1,6 @@
 import "./notifications.css";
 import { API_BASE_URL } from "../../config";
+import { getSaveButton } from "../../components/save-button";
 
 export function getNotificationsView(webix: any) {
   return {
@@ -168,6 +169,48 @@ export function getNotificationsView(webix: any) {
           ],
         },
       },
+      getSaveButton(
+        webix,
+        "notifications",
+        "Notification settings saved",
+        (values: any) => {
+          // Call backend API to update notification settings
+          webix
+            .ajax()
+            .headers({
+              "Content-Type": "application/json",
+            })
+            .put(
+              `${API_BASE_URL}/users/1/notifications/update/`,
+              JSON.stringify({
+                push_messages:
+                  !!values.push_messages,
+                push_comments:
+                  !!values.push_comments,
+                push_reminders:
+                  !!values.push_reminders,
+                email_news: !!values.email_news,
+                email_messages:
+                  !!values.email_messages,
+                email_reminders:
+                  !!values.email_reminders,
+              })
+            )
+            .then((response: any) => {
+              const data = response.json();
+              console.log(
+                "Notification settings updated:",
+                data
+              );
+            })
+            .catch((err: any) => {
+              console.error(
+                "Failed to update notification settings",
+                err
+              );
+            });
+        }
+      ),
     ],
     on: {
       onShow: function () {

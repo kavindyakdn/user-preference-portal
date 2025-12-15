@@ -3,6 +3,8 @@
     sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  /* Default accent color for app UI */
+  --app-primary-color: #4b7bec;
 }
 
 * {
@@ -24,6 +26,37 @@ body {
   /* min-width: 320px; */
   /* min-height: 100vh; */
   overflow: hidden;
+}
+
+/* Global light / dark background + text */
+body[data-theme="light"] {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+body[data-theme="dark"] {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+/* Global font families */
+body[data-font="system"] {
+  font-family: system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
+}
+
+body[data-font="sans"] {
+  font-family: "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+body[data-font="serif"] {
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+body[data-font="mono"] {
+  font-family: "SF Mono", "Consolas", "Menlo",
+    monospace;
 }
 
 #app {

@@ -76,9 +76,9 @@ async function initWebix() {
                   id: "notifications",
                 },
                 {
+                  // Theme page
+                  ...themeView,
                   id: "theme",
-                  view: themeView.view,
-                  template: themeView.template,
                 },
                 {
                   id: "privacy",

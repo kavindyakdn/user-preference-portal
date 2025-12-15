@@ -1,0 +1,149 @@
+.theme-header {
+  padding: 20px 24px 10px;
+}
+
+.theme-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.theme-subtitle {
+  font-size: 13px;
+  color: #666;
+}
+
+.theme-segmented .webix_segment_0,
+.theme-segmented .webix_segment_1 {
+  min-width: 90px;
+}
+
+.theme-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.theme-color-text {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.theme-color-label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.theme-color-description {
+  font-size: 12px;
+  color: #777;
+}
+
+.theme-color-picker-wrapper input[type="color"] {
+  width: 40px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.theme-select .webix_inp_static {
+  border-radius: 6px;
+}
+
+.theme-preview {
+  padding: 16px 24px 24px;
+  background: rgba(235, 232, 232, 0.02);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.theme-preview[data-theme="dark"] {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.theme-preview-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.theme-preview-subtitle {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.theme-preview-card {
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #ffffff11;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body[data-theme="light"] .theme-preview-card {
+  background: #ffffff;
+}
+
+body[data-theme="dark"] .theme-preview-card {
+  background: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.theme-preview-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.theme-preview-card-text {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Better contrast for dark theme */
+body[data-theme="dark"] .theme-preview-title,
+body[data-theme="dark"]
+  .theme-preview-card-title {
+  color: #f5f5f5;
+}
+
+body[data-theme="dark"] .theme-preview-subtitle,
+body[data-theme="dark"] .theme-preview-card-text {
+  color: #cccccc;
+}
+
+.theme-preview[data-font="sans"] {
+  font-family: "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.theme-preview[data-font="serif"] {
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+.theme-preview[data-font="mono"] {
+  font-family: "SF Mono", "Consolas", "Menlo",
+    monospace;
+}
+
+.theme-preview-button {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: var(
+    --app-primary-color,
+    #4b7bec
+  );
+  color: #fff;
+}
+
+.theme-preview-button:hover {
+  opacity: 0.9;
+}
