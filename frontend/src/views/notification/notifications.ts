@@ -1,4 +1,5 @@
 import "./notifications.css";
+import { API_BASE_URL } from "../../config";
 
 export function getNotificationsView(webix: any) {
   return {
@@ -29,7 +30,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "push_messages",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -53,7 +53,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "push_comments",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -77,7 +76,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "push_reminders",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -109,7 +107,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "email_news",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -133,7 +130,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "email_messages",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -157,7 +153,6 @@ export function getNotificationsView(webix: any) {
                 {
                   view: "switch",
                   name: "email_reminders",
-                  value: 1,
                   width: 80,
                 },
               ],
@@ -174,5 +169,50 @@ export function getNotificationsView(webix: any) {
         },
       },
     ],
+    on: {
+      onShow: function () {
+        console.log("khbajsndalksd,s");
+
+        // Load notification settings from backend and populate the switches
+        webix
+          .ajax()
+          .get(
+            `${API_BASE_URL}/users/1/notifications/`
+          )
+          .then((response: any) => {
+            const data = response.json();
+            if (!data) return;
+
+            const form = this as any;
+            if (form && form.setValues) {
+              form.setValues({
+                push_messages: data.push_messages
+                  ? 1
+                  : 0,
+                push_comments: data.push_comments
+                  ? 1
+                  : 0,
+                push_reminders:
+                  data.push_reminders ? 1 : 0,
+                email_news: data.email_news
+                  ? 1
+                  : 0,
+                email_messages:
+                  data.email_messages ? 1 : 0,
+                email_reminders:
+                  data.email_reminders ? 1 : 0,
+              });
+            }
+          })
+          .catch((err: any) => {
+            // Log but don't break the UI
+            // eslint-disable-next-line no-console
+            console.error(
+              "Failed to load notification settings",
+              err
+            );
+          });
+      },
+    },
   };
 }

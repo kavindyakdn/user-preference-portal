@@ -45,6 +45,19 @@ async function initWebix() {
                   if (multiview) {
                     multiview.setValue(id);
                   }
+
+                  // When Notifications is selected, explicitly trigger its onShow handler
+                  if (id === "notifications") {
+                    const notifView = webix.$$(
+                      "notifications"
+                    );
+                    if (notifView) {
+                      notifView.callEvent(
+                        "onShow",
+                        []
+                      );
+                    }
+                  }
                 }
               ),
             },

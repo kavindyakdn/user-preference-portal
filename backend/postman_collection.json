@@ -44,6 +44,45 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Get Notification Settings by User ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/notifications/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "notifications", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Notification Settings by User ID",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"push_messages\": true,\n  \"push_comments\": true,\n  \"push_reminders\": false,\n  \"email_news\": true,\n  \"email_messages\": false,\n  \"email_reminders\": true\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/notifications/update/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "notifications", "update", ""]
+        }
+      },
+      "response": []
     }
   ],
   "variable": []
