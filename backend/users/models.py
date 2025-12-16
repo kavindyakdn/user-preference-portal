@@ -6,6 +6,12 @@ class User(models.Model):
     last_name = models.CharField(max_length=100)
 
     email = models.EmailField(unique=True)
+    password = models.CharField(
+        max_length=128,
+        blank=True,
+        default="",
+        help_text="Hashed password or placeholder; store securely."
+    )
 
     profile_picture = models.ImageField(
         upload_to='profile_pictures/',

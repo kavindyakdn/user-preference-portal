@@ -9,6 +9,7 @@ from .views import (
     update_theme_settings,
     get_privacy_settings,
     update_privacy_settings,
+    update_password,
 )
 
 urlpatterns = [
@@ -21,5 +22,6 @@ urlpatterns = [
     path("<int:pk>/theme/update/", update_theme_settings, name="update_theme_settings"),
     path("<int:pk>/privacy/", get_privacy_settings, name="get_privacy_settings"),
     path("<int:pk>/privacy/update/", update_privacy_settings, name="update_privacy_settings"),
+    path("<int:pk>/password/update/", update_password, name="update_password"),
 ]
 

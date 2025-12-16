@@ -1,5 +1,6 @@
 import json
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
+from django.contrib.auth.hashers import check_password, make_password
 from .models import User, UserNotificationSettings, UserThemeSettings, UserPrivacySettings
 
 
@@ -327,3 +328,46 @@ def update_privacy_settings(request, pk: int):
         "data_sharing": settings.data_sharing,
     }
     return JsonResponse(data)
+
+
+def update_password(request, pk: int):
+    """
+    Update a user's password.
+    Expects JSON body with: current_password, new_password, confirm_password.
+    Validates current password and matching new/confirm.
+    """
+    if request.method not in ("PUT", "PATCH", "POST"):
+        return HttpResponseBadRequest("Unsupported method")
+
+    try:
+        body = request.body.decode() or "{}"
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+
+    required_fields = ("current_password", "new_password", "confirm_password")
+    if not all(field in payload and payload[field] for field in required_fields):
+        return HttpResponseBadRequest("Missing password fields")
+
+    current_password = payload["current_password"]
+    new_password = payload["new_password"]
+    confirm_password = payload["confirm_password"]
+
+    if new_password != confirm_password:
+        return HttpResponseBadRequest("New password and confirmation do not match")
+
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+
+    if not user.password:
+        return HttpResponseBadRequest("No existing password set")
+
+    if not check_password(current_password, user.password):
+        return HttpResponseBadRequest("Current password is incorrect")
+
+    user.password = make_password(new_password)
+    user.save()
+
+    return JsonResponse({"id": user.id, "message": "Password updated"})

@@ -169,35 +169,173 @@ export function getAccountView(webix: any) {
         placeholder: "Enter last name",
         labelWidth: 120,
       },
+      {
+        cols: [
+          {
+            view: "template",
+            borderless: true,
+            autoheight: true,
+            template: `<div class='label-text'>Password</div>`,
+          },
+          {
+            view: "button",
+            value: "Edit password",
+            width: 140,
+            css: "webix_secondary",
+            click: function () {
+              const section = webix.$$(
+                "passwordSection"
+              );
+              if (section) {
+                if (section.isVisible()) {
+                  section.hide();
+                  section.clear?.();
+                } else {
+                  section.show();
+                }
+              }
+            },
+          },
+        ],
+      },
+      {
+        id: "passwordSection",
+        hidden: true,
+        rows: [
+          {
+            view: "text",
+            type: "password",
+            label: "Current Password",
+            name: "current_password",
+            placeholder: "Enter current password",
+            labelWidth: 120,
+          },
+          {
+            view: "text",
+            type: "password",
+            label: "New Password",
+            name: "new_password",
+            placeholder: "Enter new password",
+            labelWidth: 120,
+          },
+          {
+            view: "text",
+            type: "password",
+            label: "Confirm Password",
+            name: "confirm_password",
+            placeholder: "Confirm new password",
+            labelWidth: 120,
+          },
+        ],
+      },
       getSaveButton(
         webix,
         "account",
         "Account settings saved",
         (values: any) => {
-          // Call backend API to update user
-          webix
-            .ajax()
-            .headers({
-              "Content-Type": "application/json",
-            })
-            .put(
-              `${API_BASE_URL}/users/${USER_ID}/update/`,
-              JSON.stringify({
-                email: values.email,
-                first_name: values.firstName,
-                last_name: values.lastName,
-              })
-            )
-            .then((response: any) => {
-              const data = response.json();
-              console.log("User updated:", data);
+          const hasPasswordChange =
+            !!values.current_password ||
+            !!values.new_password ||
+            !!values.confirm_password;
+
+          if (hasPasswordChange) {
+            if (
+              !values.current_password ||
+              !values.new_password ||
+              !values.confirm_password
+            ) {
               webix.message(
-                "Account settings saved"
+                "Please fill all password fields",
+                "error"
               );
+              return;
+            }
+            if (
+              values.new_password !==
+              values.confirm_password
+            ) {
+              webix.message(
+                "New password and confirmation do not match",
+                "error"
+              );
+              return;
+            }
+          }
+
+          const updateUser = () =>
+            webix
+              .ajax()
+              .headers({
+                "Content-Type":
+                  "application/json",
+              })
+              .put(
+                `${API_BASE_URL}/users/${USER_ID}/update/`,
+                JSON.stringify({
+                  email: values.email,
+                  first_name: values.firstName,
+                  last_name: values.lastName,
+                })
+              )
+              .then((response: any) => {
+                const data = response.json();
+                console.log(
+                  "User updated:",
+                  data
+                );
+                webix.message(
+                  "Account settings saved"
+                );
+              });
+
+          const updatePassword = () =>
+            webix
+              .ajax()
+              .headers({
+                "Content-Type":
+                  "application/json",
+              })
+              .put(
+                `${API_BASE_URL}/users/${USER_ID}/password/update/`,
+                JSON.stringify({
+                  current_password:
+                    values.current_password,
+                  new_password:
+                    values.new_password,
+                  confirm_password:
+                    values.confirm_password,
+                })
+              )
+              .then(() => {
+                webix.message("Password updated");
+                const form = webix.$$(
+                  "account"
+                ) as any;
+                if (form?.setValues) {
+                  form.setValues(
+                    {
+                      current_password: "",
+                      new_password: "",
+                      confirm_password: "",
+                    },
+                    true
+                  );
+                }
+                const section = webix.$$(
+                  "passwordSection"
+                );
+                section?.hide();
+              });
+
+          updateUser()
+            .then(() => {
+              if (hasPasswordChange) {
+                return updatePassword();
+              }
             })
             .catch((err: any) => {
               console.error(
-                "Failed to update user",
+                "Failed to update user or password",
                 err
               );
               webix.message(
