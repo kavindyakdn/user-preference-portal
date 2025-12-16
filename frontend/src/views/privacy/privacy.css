@@ -1,5 +1,19 @@
-.privacy-header {
-  padding: 20px 24px 10px;
+.privacy-desc {
+  font-size: 12px;
+  color: #666;
+  padding-left: 4px;
+  margin: 2px 0 8px;
+}
+
+@media (max-width: 600px) {
+  .webix_el_label {
+    width: 100% !important;
+    margin-bottom: 4px;
+  }
+
+  .webix_el_switch {
+    justify-content: flex-start;
+  }
 }
 
 .privacy-title {
@@ -12,19 +26,3 @@
   font-size: 13px;
   color: #666;
 }
-
-.privacy-tag {
-  padding: 4px 0;
-}
-
-.privacy-tag-title {
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.privacy-tag-desc {
-  font-size: 12px;
-  color: #666;
-}
-
-

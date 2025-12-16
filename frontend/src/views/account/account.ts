@@ -12,7 +12,7 @@ export function getAccountView(webix: any) {
       {
         view: "template",
         template:
-          "<div style='padding: 20px; font-size: 18px; font-weight: bold;'>Account Settings</div>",
+          "<div class='category-title'>Account Settings</div>",
         height: 50,
       },
       {

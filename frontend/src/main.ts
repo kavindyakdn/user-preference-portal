@@ -130,6 +130,15 @@ function createUI(webix: any) {
               themeView.callEvent("onShow", []);
             }
           }
+
+          // When Privacy is selected, explicitly trigger its onShow handler
+          if (id === "privacy") {
+            const privacyView =
+              webix.$$("privacy");
+            if (privacyView) {
+              privacyView.callEvent("onShow", []);
+            }
+          }
         }),
       },
       {

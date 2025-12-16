@@ -69,3 +69,32 @@ body[data-font="mono"] {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.category-title {
+  padding: 20px 20px 5px 0px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.category-subtitle {
+  font-size: 13px;
+  color: #666;
+  padding: 0px 20px 5px 0px;
+}
+
+.label-text {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.label-description {
+  font-size: 12px;
+  color: #777;
+}
+
+.label-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0px;
+}

@@ -210,11 +210,9 @@ export function getThemeView(webix: any) {
       {
         view: "template",
         template: `
-          <div class="theme-header">
-            <div class="theme-title">Theme Settings</div>
-            <div class="theme-subtitle">
-              Personalize how your preferences portal looks and feels.
-            </div>
+          <div class="category-title">Theme Settings</div>
+          <div class="theme-subtitle">
+            Personalize how your preferences portal looks and feels.
           </div>
         `,
         height: 80,
@@ -251,7 +249,7 @@ export function getThemeView(webix: any) {
                 onChange: function (
                   value: string
                 ) {
-                  // When skin changes, set primary color and font family to "default"
+                  // When skin changes, set primary color to "default"
                   const form = webix.$$(
                     "theme"
                   ) as any;
@@ -265,41 +263,6 @@ export function getThemeView(webix: any) {
                       colorInput.value =
                         "default";
                     }
-
-                    // Hide color picker and show "default" text
-                    const colorPickerWrapper =
-                      document.getElementById(
-                        "themeColorPickerWrapper"
-                      );
-                    const defaultText =
-                      document.getElementById(
-                        "defaultColorText"
-                      );
-                    const colorPicker =
-                      document.getElementById(
-                        "themeColorPicker"
-                      ) as HTMLInputElement | null;
-
-                    if (
-                      colorPickerWrapper &&
-                      defaultText &&
-                      colorPicker
-                    ) {
-                      colorPicker.style.display =
-                        "none";
-                      defaultText.style.display =
-                        "block";
-                    }
-
-                    // Set font family to "default" when skin changes
-                    form.setValues({
-                      font_family: "default",
-                    });
-
-                    // Apply default font (removes custom font overrides)
-                    applyFontFamilyToWebix(
-                      "default"
-                    );
                   }
 
                   // Load skin with default color (don't apply custom colors)
@@ -319,15 +282,15 @@ export function getThemeView(webix: any) {
               view: "template",
               height: 100,
               template: `
-                <div class="theme-color-row">
+                <div class="label-container">
                   <div class="theme-color-text">
-                    <div class="theme-color-label">Primary color</div>
-                    <div class="theme-color-description">
+                    <div class="label-text">Primary color</div>
+                    <div class="label-description">
                       This accent color is used for highlights and primary actions.
                     </div>
                   </div>
                   <div class="theme-color-picker-wrapper" id="themeColorPickerWrapper">
-                    <input id="themeColorPicker" type="color" value="#4b7bec" style="display: none;" />
+                    <input id="themeColorPicker" type="color" value="#4b7bec" />
                     <div id="defaultColorText" style="display: none; padding: 8px 12px; background: #f5f5f5; border-radius: 4px; color: #666; font-size: 13px;">
                       Default
                     </div>
@@ -438,10 +401,10 @@ export function getThemeView(webix: any) {
               cols: [
                 {
                   view: "template",
-                  width: 120,
                   borderless: true,
-                  template:
-                    "<div class='theme-color-label'>Font family</div>",
+                  autoheight: true,
+                  template: `<div class='label-text'>Font Family</div>
+                                    <div class='label-description'>This font family will be used across the entire application</div>  `,
                 },
                 {
                   view: "richselect",
@@ -452,10 +415,10 @@ export function getThemeView(webix: any) {
                       id: "default",
                       value: "Default",
                     },
-                    {
-                      id: "system",
-                      value: "System default",
-                    },
+                    // {
+                    //   id: "system",
+                    //   value: "System default",
+                    // },
                     {
                       id: "sans",
                       value: "Sans Serif",

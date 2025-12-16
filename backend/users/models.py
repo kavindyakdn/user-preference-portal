@@ -93,8 +93,7 @@ class UserPrivacySettings(models.Model):
         on_delete=models.CASCADE,
         related_name='privacy_settings'
     )
-
-    # Profile visibility: who can see the user's profile
+    
     profile_visibility = models.CharField(
         max_length=20,
         choices=[
@@ -104,13 +103,10 @@ class UserPrivacySettings(models.Model):
         ],
         default='public'
     )
-
-    # Whether to show the user's email on their profile
+    
     show_email = models.BooleanField(default=False)
-
-    # Whether to allow data sharing for analytics / improvements
-    data_sharing = models.BooleanField(default=True)
-
+    data_sharing = models.BooleanField(default=False)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

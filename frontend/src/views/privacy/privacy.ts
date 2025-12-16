@@ -12,11 +12,9 @@ export function getPrivacyView(webix: any) {
       {
         view: "template",
         template: `
-          <div class="privacy-header">
-            <div class="privacy-title">Privacy Settings</div>
-            <div class="privacy-subtitle">
-              Manage privacy preferences, including profile visibility and data sharing.
-            </div>
+          <div class="category-title">Privacy Settings</div>
+          <div class="category-subtitle">
+            Manage privacy preferences, including profile visibility and data sharing.
           </div>
         `,
         height: 80,
@@ -24,7 +22,7 @@ export function getPrivacyView(webix: any) {
       },
       {
         view: "fieldset",
-        label: "Profile visibility",
+        label: "Profile Visibility",
         body: {
           rows: [
             {
@@ -32,59 +30,71 @@ export function getPrivacyView(webix: any) {
               name: "profile_visibility",
               value: "public",
               options: [
-                { id: "public", value: "Public" },
-                { id: "friends", value: "Friends only" },
-                { id: "private", value: "Only me" },
+                {
+                  id: "public",
+                  value: "Public",
+                },
+                {
+                  id: "friends",
+                  value: "Friends only",
+                },
+                {
+                  id: "private",
+                  value: "Only me",
+                },
               ],
-              vertical: true,
+              css: "privacy-radio",
+            },
+            {
+              view: "template",
+              css: "privacy-desc",
+              borderless: true,
+              autoheight: true,
+              template:
+                "Control who can view your profile information across the platform.",
             },
           ],
         },
       },
       {
         view: "fieldset",
-        label: "Profile details",
+        label: "Contact Information",
         body: {
-          rows: [
+          cols: [
             {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template:
-                    "<div class='privacy-tag'><div class='privacy-tag-title'>Show email on profile</div><div class='privacy-tag-desc'>Allow others to see your email address on your profile.</div></div>",
-                },
-                {
-                  view: "switch",
-                  name: "show_email",
-                  width: 80,
-                },
-              ],
+              view: "template",
+              borderless: true,
+              autoheight: true,
+              template: `<div class='label-text'>Show my email to others</div>
+                                    <div class='label-description'>Allow other users to see your email address on your profile</div>  `,
+            },
+            {
+              view: "switch",
+              name: "show_email",
+              width: 80,
+              // label: "Show my email to others",
+              // value: 0,
             },
           ],
         },
       },
       {
         view: "fieldset",
-        label: "Data sharing",
+        label: "Data Sharing",
         body: {
-          rows: [
+          cols: [
             {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template:
-                    "<div class='privacy-tag'><div class='privacy-tag-title'>Allow data sharing</div><div class='privacy-tag-desc'>Share usage data to improve the product experience.</div></div>",
-                },
-                {
-                  view: "switch",
-                  name: "data_sharing",
-                  width: 80,
-                },
-              ],
+              view: "template",
+              borderless: true,
+              autoheight: true,
+              template: `<div class='label-text'>Share usage data to improve the service</div>
+                                    <div class='label-description'>Allow us to use anonymized data to improve features and performance.</div>  `,
+            },
+            {
+              view: "switch",
+              name: "data_sharing",
+              // value: 0,
+              width: 80,
             },
           ],
         },
@@ -94,6 +104,7 @@ export function getPrivacyView(webix: any) {
         "privacy",
         "Privacy settings saved",
         (values: any) => {
+          // Call backend API to update privacy settings
           webix
             .ajax()
             .headers({
@@ -102,9 +113,11 @@ export function getPrivacyView(webix: any) {
             .put(
               `${API_BASE_URL}/users/1/privacy/update/`,
               JSON.stringify({
-                profile_visibility: values.profile_visibility,
+                profile_visibility:
+                  values.profile_visibility,
                 show_email: !!values.show_email,
-                data_sharing: !!values.data_sharing,
+                data_sharing:
+                  !!values.data_sharing,
               })
             )
             .then((response: any) => {
@@ -137,9 +150,14 @@ export function getPrivacyView(webix: any) {
             if (form && form.setValues) {
               form.setValues({
                 profile_visibility:
-                  data.profile_visibility || "public",
-                show_email: data.show_email ? 1 : 0,
-                data_sharing: data.data_sharing ? 1 : 0,
+                  data.profile_visibility ||
+                  "public",
+                show_email: data.show_email
+                  ? 1
+                  : 0,
+                data_sharing: data.data_sharing
+                  ? 1
+                  : 0,
               });
             }
           })

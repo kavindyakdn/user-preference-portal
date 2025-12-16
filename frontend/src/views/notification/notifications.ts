@@ -1,4 +1,5 @@
 import "./notifications.css";
+import "../../style.css";
 import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
 
@@ -12,7 +13,7 @@ export function getNotificationsView(webix: any) {
       {
         view: "template",
         template:
-          "<div style='padding: 20px; font-size: 18px; font-weight: bold;'>Notification Settings</div>",
+          "<div class='category-title'>Notification Settings</div>",
         height: 50,
       },
       {
@@ -26,8 +27,9 @@ export function getNotificationsView(webix: any) {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>Messages</div><div class='notification-tag-desc'>Messages from the people in your friend list</div></div>",
+                  template: `
+                    <div class='label-text'>Messages</div>
+                    <div class='label-description'>Messages from the people in your friend list</div>`,
                 },
                 {
                   view: "switch",
@@ -36,14 +38,22 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>Messages from the people in your friend list</div>",
+            // },
             {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>Comments</div><div class='notification-tag-desc'>Comments on your posts and replies to your comments</div></div>",
+                  template: `<div class='label-text'>Comments</div>
+                                    <div class='label-description'>Comments on your posts and replies to your comments</div>`,
                 },
                 {
                   view: "switch",
@@ -52,14 +62,22 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>Comments on your posts and replies to your comments</div>",
+            // },
             {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>Reminders</div><div class='notification-tag-desc'>These are notifications to remind you of updates you might have missed</div></div>",
+                  template: `<div class='label-text'>Reminders</div>
+                    <div class='label-description'>These are notifications to remind you of updates you might have missed</div>`,
                 },
                 {
                   view: "switch",
@@ -68,6 +86,14 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>These are notifications to remind you of updates you might have missed</div>",
+            // },
           ],
         },
       },
@@ -82,8 +108,9 @@ export function getNotificationsView(webix: any) {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>News and Updates</div><div class='notification-tag-desc'>News about products and feature updates</div></div>",
+                  template: `<div class='label-text'>News and Updates</div>
+                                    <div class='label-description'>News about products and feature updates</div>
+`,
                 },
                 {
                   view: "switch",
@@ -92,14 +119,22 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>News about products and feature updates</div>",
+            // },
             {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>Messages</div><div class='notification-tag-desc'>Messages from the people in your friend list</div></div>",
+                  template: `<div class='label-text'>Messages</div>
+                                    <div class='label-description'>Messages from the people in your friend list</div>  `,
                 },
                 {
                   view: "switch",
@@ -108,14 +143,22 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>Messages from the people in your friend list</div>",
+            // },
             {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template:
-                    "<div class='notification-tag'><div class='notification-tag-title'>Reminders</div><div class='notification-tag-desc'>These are notifications to remind you of updates you might have missed</div></div>",
+                  template: `<div class='label-text'>Reminders</div>
+                    <div class='label-description'>These are notifications to remind you of updates you might have missed</div>`,
                 },
                 {
                   view: "switch",
@@ -124,6 +167,14 @@ export function getNotificationsView(webix: any) {
                 },
               ],
             },
+            // {
+            //   view: "template",
+            //   css: "notification-desc",
+            //   borderless: true,
+            //   // autoheight: true,
+            //   template:
+            //     "<div class='label-description'>These are notifications to remind you of updates you might have missed</div>",
+            // },
           ],
         },
       },

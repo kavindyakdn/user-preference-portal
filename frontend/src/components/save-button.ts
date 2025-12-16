@@ -14,7 +14,7 @@ export function getSaveButton(
         const values = form.getValues();
         webix.message(successMessage);
         console.log("Form data:", values);
-        
+
         if (onSave) {
           onSave(values);
         }
@@ -22,4 +22,3 @@ export function getSaveButton(
     },
   };
 }
-

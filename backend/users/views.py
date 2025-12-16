@@ -1,11 +1,6 @@
 import json
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
-from .models import (
-    User,
-    UserNotificationSettings,
-    UserThemeSettings,
-    UserPrivacySettings,
-)
+from .models import User, UserNotificationSettings, UserThemeSettings, UserPrivacySettings
 
 
 def get_user(request, pk: int):
@@ -226,17 +221,17 @@ def get_privacy_settings(request, pk: int):
         user = User.objects.get(pk=pk)
     except User.DoesNotExist:
         raise Http404("User not found")
-
+    
     # Get or create privacy settings
     settings, created = UserPrivacySettings.objects.get_or_create(
         user=user,
         defaults={
             'profile_visibility': 'public',
             'show_email': False,
-            'data_sharing': True,
+            'data_sharing': False,
         }
     )
-
+    
     data = {
         "user_id": settings.user.id,
         "profile_visibility": settings.profile_visibility,
@@ -264,26 +259,30 @@ def update_privacy_settings(request, pk: int):
         user = User.objects.get(pk=pk)
     except User.DoesNotExist:
         raise Http404("User not found")
-
+    
     # Get or create privacy settings
     settings, created = UserPrivacySettings.objects.get_or_create(
         user=user,
         defaults={
             'profile_visibility': 'public',
             'show_email': False,
-            'data_sharing': True,
+            'data_sharing': False,
         }
     )
 
     # Update allowed fields if present
-    allowed_fields = ("profile_visibility", "show_email", "data_sharing")
-    for field in allowed_fields:
-        if field in payload:
-            value = payload[field]
-            # Cast booleans correctly for boolean fields
-            if field in ("show_email", "data_sharing"):
-                value = bool(value)
-            setattr(settings, field, value)
+    if "profile_visibility" in payload:
+        profile_visibility = payload["profile_visibility"]
+        # Validate the value is one of the allowed choices
+        valid_choices = ['public', 'friends', 'private']
+        if profile_visibility in valid_choices:
+            settings.profile_visibility = profile_visibility
+    
+    if "show_email" in payload:
+        settings.show_email = bool(payload["show_email"])
+    
+    if "data_sharing" in payload:
+        settings.data_sharing = bool(payload["data_sharing"])
 
     settings.save()
 
