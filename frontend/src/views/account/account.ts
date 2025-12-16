@@ -189,11 +189,18 @@ export function getAccountView(webix: any) {
             .then((response: any) => {
               const data = response.json();
               console.log("User updated:", data);
+              webix.message(
+                "Account settings saved"
+              );
             })
             .catch((err: any) => {
               console.error(
                 "Failed to update user",
                 err
+              );
+              webix.message(
+                "Failed to update account settings",
+                "error"
               );
             });
         }

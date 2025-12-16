@@ -159,11 +159,18 @@ export function getNotificationsView(webix: any) {
                 "Notification settings updated:",
                 data
               );
+              webix.message(
+                "Notification settings saved"
+              );
             })
             .catch((err: any) => {
               console.error(
                 "Failed to update notification settings",
                 err
+              );
+              webix.message(
+                "Failed to update notification settings",
+                "error"
               );
             });
         }

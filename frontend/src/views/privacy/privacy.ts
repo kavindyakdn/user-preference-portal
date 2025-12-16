@@ -171,11 +171,18 @@ export function getPrivacyView(webix: any) {
                 "Privacy settings updated:",
                 data
               );
+              webix.message(
+                "Privacy settings saved"
+              );
             })
             .catch((err: any) => {
               console.error(
                 "Failed to update privacy settings",
                 err
+              );
+              webix.message(
+                "Failed to update privacy settings",
+                "error"
               );
             });
         }
