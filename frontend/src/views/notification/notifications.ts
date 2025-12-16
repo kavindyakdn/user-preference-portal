@@ -26,7 +26,8 @@ export function getNotificationsView(webix: any) {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "Messages",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>Messages</div><div class='notification-tag-desc'>Messages from the people in your friend list</div></div>",
                 },
                 {
                   view: "switch",
@@ -36,20 +37,13 @@ export function getNotificationsView(webix: any) {
               ],
             },
             {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "Messages from the people in your friend list",
-            },
-            {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "Comments",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>Comments</div><div class='notification-tag-desc'>Comments on your posts and replies to your comments</div></div>",
                 },
                 {
                   view: "switch",
@@ -59,20 +53,13 @@ export function getNotificationsView(webix: any) {
               ],
             },
             {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "Comments on your posts and replies to your comments",
-            },
-            {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "Reminders",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>Reminders</div><div class='notification-tag-desc'>These are notifications to remind you of updates you might have missed</div></div>",
                 },
                 {
                   view: "switch",
@@ -80,14 +67,6 @@ export function getNotificationsView(webix: any) {
                   width: 80,
                 },
               ],
-            },
-            {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "These are notifications to remind you of updates you might have missed",
             },
           ],
         },
@@ -103,7 +82,8 @@ export function getNotificationsView(webix: any) {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "News and Updates",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>News and Updates</div><div class='notification-tag-desc'>News about products and feature updates</div></div>",
                 },
                 {
                   view: "switch",
@@ -113,20 +93,13 @@ export function getNotificationsView(webix: any) {
               ],
             },
             {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "News about products and feature updates",
-            },
-            {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "Messages",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>Messages</div><div class='notification-tag-desc'>Messages from the people in your friend list</div></div>",
                 },
                 {
                   view: "switch",
@@ -136,20 +109,13 @@ export function getNotificationsView(webix: any) {
               ],
             },
             {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "Messages from the people in your friend list",
-            },
-            {
               cols: [
                 {
                   view: "template",
                   borderless: true,
                   autoheight: true,
-                  template: "Reminders",
+                  template:
+                    "<div class='notification-tag'><div class='notification-tag-title'>Reminders</div><div class='notification-tag-desc'>These are notifications to remind you of updates you might have missed</div></div>",
                 },
                 {
                   view: "switch",
@@ -157,14 +123,6 @@ export function getNotificationsView(webix: any) {
                   width: 80,
                 },
               ],
-            },
-            {
-              view: "template",
-              css: "notification-desc",
-              borderless: true,
-              // autoheight: true,
-              template:
-                "These are notifications to remind you of updates you might have missed",
             },
           ],
         },

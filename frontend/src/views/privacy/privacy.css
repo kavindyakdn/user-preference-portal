@@ -1,0 +1,30 @@
+.privacy-header {
+  padding: 20px 24px 10px;
+}
+
+.privacy-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.privacy-subtitle {
+  font-size: 13px;
+  color: #666;
+}
+
+.privacy-tag {
+  padding: 4px 0;
+}
+
+.privacy-tag-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.privacy-tag-desc {
+  font-size: 12px;
+  color: #666;
+}
+
+

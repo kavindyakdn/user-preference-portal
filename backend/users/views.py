@@ -1,6 +1,11 @@
 import json
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
-from .models import User, UserNotificationSettings, UserThemeSettings
+from .models import (
+    User,
+    UserNotificationSettings,
+    UserThemeSettings,
+    UserPrivacySettings,
+)
 
 
 def get_user(request, pk: int):
@@ -211,5 +216,81 @@ def update_theme_settings(request, pk: int):
         "skin": settings.skin,
         "primary_color": settings.primary_color,
         "font_family": settings.font_family,
+    }
+    return JsonResponse(data)
+
+
+def get_privacy_settings(request, pk: int):
+    """Get privacy settings for a user by user ID."""
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+
+    # Get or create privacy settings
+    settings, created = UserPrivacySettings.objects.get_or_create(
+        user=user,
+        defaults={
+            'profile_visibility': 'public',
+            'show_email': False,
+            'data_sharing': True,
+        }
+    )
+
+    data = {
+        "user_id": settings.user.id,
+        "profile_visibility": settings.profile_visibility,
+        "show_email": settings.show_email,
+        "data_sharing": settings.data_sharing,
+    }
+    return JsonResponse(data)
+
+
+def update_privacy_settings(request, pk: int):
+    """
+    Update privacy settings for a user by user ID.
+    Expects JSON body with any of: profile_visibility, show_email, data_sharing.
+    """
+    if request.method not in ("PUT", "PATCH", "POST"):
+        return HttpResponseBadRequest("Unsupported method")
+
+    try:
+        body = request.body.decode() or "{}"
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON")
+
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+
+    # Get or create privacy settings
+    settings, created = UserPrivacySettings.objects.get_or_create(
+        user=user,
+        defaults={
+            'profile_visibility': 'public',
+            'show_email': False,
+            'data_sharing': True,
+        }
+    )
+
+    # Update allowed fields if present
+    allowed_fields = ("profile_visibility", "show_email", "data_sharing")
+    for field in allowed_fields:
+        if field in payload:
+            value = payload[field]
+            # Cast booleans correctly for boolean fields
+            if field in ("show_email", "data_sharing"):
+                value = bool(value)
+            setattr(settings, field, value)
+
+    settings.save()
+
+    data = {
+        "user_id": settings.user.id,
+        "profile_visibility": settings.profile_visibility,
+        "show_email": settings.show_email,
+        "data_sharing": settings.data_sharing,
     }
     return JsonResponse(data)

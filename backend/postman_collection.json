@@ -111,7 +111,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"skin\": \"material\",\n  \"primary_color\": \"#ff6b6b\",\n  \"font_family\": \"sans\"\n}"
+          "raw": "{\n  \"skin\": \"material\",\n  \"primary_color\": \"default\",\n  \"font_family\": \"default\"\n}"
         },
         "url": {
           "raw": "http://127.0.0.1:8000/api/users/1/theme/update/",
@@ -119,6 +119,45 @@
           "host": ["127", "0", "0", "1"],
           "port": "8000",
           "path": ["api", "users", "1", "theme", "update", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Privacy Settings by User ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/privacy/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "privacy", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Privacy Settings by User ID",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"profile_visibility\": \"public\",\n  \"show_email\": false,\n  \"data_sharing\": true\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/users/1/privacy/update/",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "8000",
+          "path": ["api", "users", "1", "privacy", "update", ""]
         }
       },
       "response": []

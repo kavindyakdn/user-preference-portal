@@ -133,6 +133,74 @@ export function applyPrimaryColorToWebix(
   document.head.appendChild(style);
 }
 
+// Function to apply font family to Webix components
+export function applyFontFamilyToWebix(
+  fontFamily: string
+) {
+  // If fontFamily is "default", remove any custom font overrides
+  // and let the skin's native CSS handle the font
+  if (fontFamily === "default") {
+    // Remove custom font styles to use skin defaults
+    const existingStyle = document.getElementById(
+      "webix-custom-font"
+    ) as HTMLStyleElement | null;
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    // Also remove data-font attribute
+    document.body.removeAttribute("data-font");
+    return;
+  }
+
+  // Map font family values to CSS font-family strings
+  const fontFamilyMap: Record<string, string> = {
+    system:
+      "system-ui, Avenir, Helvetica, Arial, sans-serif",
+    sans: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    serif: '"Georgia", "Times New Roman", serif',
+    mono: '"SF Mono", "Consolas", "Menlo", monospace',
+  };
+
+  const fontToApply =
+    fontFamilyMap[fontFamily] ||
+    fontFamilyMap.system;
+
+  // Remove existing custom font style if any
+  const existingStyle = document.getElementById(
+    "webix-custom-font"
+  ) as HTMLStyleElement | null;
+  if (existingStyle) {
+    existingStyle.remove();
+  }
+
+  // Create style element with custom font overrides
+  const style = document.createElement("style");
+  style.id = "webix-custom-font";
+  style.textContent = `
+    /* Override Webix font family with custom font */
+    body,
+    .webix_view,
+    .webix_el_text input,
+    .webix_el_textarea textarea,
+    .webix_el_label,
+    .webix_el_button button,
+    .webix_list_item,
+    .webix_menu_item,
+    .webix_header,
+    .webix_toolbar,
+    .webix_template {
+      font-family: ${fontToApply} !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Also set data-font attribute for consistency
+  document.body.setAttribute(
+    "data-font",
+    fontFamily
+  );
+}
+
 export function getThemeView(webix: any) {
   return {
     view: "form",
@@ -183,7 +251,7 @@ export function getThemeView(webix: any) {
                 onChange: function (
                   value: string
                 ) {
-                  // When skin changes, set primary color to "default"
+                  // When skin changes, set primary color and font family to "default"
                   const form = webix.$$(
                     "theme"
                   ) as any;
@@ -222,6 +290,16 @@ export function getThemeView(webix: any) {
                       defaultText.style.display =
                         "block";
                     }
+
+                    // Set font family to "default" when skin changes
+                    form.setValues({
+                      font_family: "default",
+                    });
+
+                    // Apply default font (removes custom font overrides)
+                    applyFontFamilyToWebix(
+                      "default"
+                    );
                   }
 
                   // Load skin with default color (don't apply custom colors)
@@ -359,15 +437,21 @@ export function getThemeView(webix: any) {
             {
               cols: [
                 {
-                  view: "label",
-                  label: "Font family",
+                  view: "template",
                   width: 120,
+                  borderless: true,
+                  template:
+                    "<div class='theme-color-label'>Font family</div>",
                 },
                 {
                   view: "richselect",
                   name: "font_family",
-                  value: "system",
+                  value: "default",
                   options: [
+                    {
+                      id: "default",
+                      value: "Default",
+                    },
                     {
                       id: "system",
                       value: "System default",
@@ -390,8 +474,8 @@ export function getThemeView(webix: any) {
                     onChange: function (
                       value: string
                     ) {
-                      document.body.setAttribute(
-                        "data-font",
+                      // Apply font family to Webix components
+                      applyFontFamilyToWebix(
                         value
                       );
                     },
@@ -475,29 +559,40 @@ export function getThemeView(webix: any) {
               form.setValues({
                 skin: data.skin || "material",
                 font_family:
-                  data.font_family || "system",
+                  data.font_family || "default",
               });
 
               // Load the skin CSS with primary color
               if (data.skin) {
-                loadWebixSkin(
-                  data.skin,
-                  data.primary_color || "#4b7bec"
-                );
+                if (
+                  data.primary_color ===
+                    "default" ||
+                  !data.primary_color
+                ) {
+                  // Load skin without custom colors (use skin defaults)
+                  loadWebixSkin(data.skin);
+                } else {
+                  // Load skin with custom primary color
+                  loadWebixSkin(
+                    data.skin,
+                    data.primary_color
+                  );
+                }
               }
 
-              // Apply font family
-              if (data.font_family) {
-                document.body.setAttribute(
-                  "data-font",
-                  data.font_family
-                );
-              }
+              // Apply font family to Webix components
+              applyFontFamilyToWebix(
+                data.font_family || "default"
+              );
 
-              // Apply primary color to Webix components
-              if (data.primary_color) {
+              // Apply primary color if not "default"
+              if (
+                data.primary_color &&
+                data.primary_color !== "default"
+              ) {
                 applyPrimaryColorToWebix(
-                  data.primary_color
+                  data.primary_color,
+                  data.skin
                 );
               }
             }

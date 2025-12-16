@@ -6,6 +6,7 @@ import {
   getThemeView,
   loadWebixSkin,
   applyPrimaryColorToWebix,
+  applyFontFamilyToWebix,
 } from "./views/theme";
 import { getPrivacyView } from "./views/privacy/privacy";
 import { getSidebar } from "./components/sidebar";
@@ -75,13 +76,10 @@ async function loadThemeSettings(webix: any) {
         );
       }
 
-      // Apply font family
-      if (data.font_family) {
-        document.body.setAttribute(
-          "data-font",
-          data.font_family
-        );
-      }
+      // Apply font family to Webix components
+      applyFontFamilyToWebix(
+        data.font_family || "default"
+      );
     }
   } catch (err) {
     console.error(
@@ -154,10 +152,9 @@ function createUI(webix: any) {
             id: "theme",
           },
           {
+            // Privacy page
+            ...privacyView,
             id: "privacy",
-            view: privacyView.view,
-            template: privacyView.template,
-            css: privacyView.css,
           },
         ],
       },

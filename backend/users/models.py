@@ -85,3 +85,34 @@ class UserThemeSettings(models.Model):
 
     def __str__(self):
         return f"Theme settings for {self.user.email}"
+
+
+class UserPrivacySettings(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='privacy_settings'
+    )
+
+    # Profile visibility: who can see the user's profile
+    profile_visibility = models.CharField(
+        max_length=20,
+        choices=[
+            ('public', 'Public'),
+            ('friends', 'Friends only'),
+            ('private', 'Only me'),
+        ],
+        default='public'
+    )
+
+    # Whether to show the user's email on their profile
+    show_email = models.BooleanField(default=False)
+
+    # Whether to allow data sharing for analytics / improvements
+    data_sharing = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Privacy settings for {self.user.email}"
