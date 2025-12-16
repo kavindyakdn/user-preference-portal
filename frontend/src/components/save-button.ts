@@ -11,6 +11,17 @@ export function getSaveButton(
     click: function () {
       const form = webix.$$(formId);
       if (form) {
+        const isValid =
+          typeof form.validate === "function"
+            ? form.validate()
+            : true;
+        if (!isValid) {
+          webix.message(
+            "Please fix validation errors",
+            "error"
+          );
+          return;
+        }
         const values = form.getValues();
         console.log("Form data:", values);
 

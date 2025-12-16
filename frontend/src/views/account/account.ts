@@ -152,6 +152,8 @@ export function getAccountView(webix: any) {
         name: "email",
         placeholder: "Enter email",
         labelWidth: 120,
+        invalidMessage:
+          "Enter a valid email address",
       },
       {
         view: "text",
@@ -207,7 +209,12 @@ export function getAccountView(webix: any) {
       ),
     ],
     rules: {
-      email: webix.rules.isNotEmpty,
+      email: function (value: string) {
+        return (
+          webix.rules.isNotEmpty(value) &&
+          webix.rules.isEmail(value)
+        );
+      },
       firstName: webix.rules.isNotEmpty,
       lastName: webix.rules.isNotEmpty,
     },
