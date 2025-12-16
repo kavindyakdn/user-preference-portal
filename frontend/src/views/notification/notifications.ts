@@ -1,7 +1,98 @@
-import "./notifications.css";
 import "../../style.css";
 import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
+
+const USER_ID = 1;
+
+// Helper function to convert boolean to Webix switch value (1 or 0)
+function boolToSwitch(
+  value: boolean | undefined
+): number {
+  return value ? 1 : 0;
+}
+
+// Helper function to convert Webix switch value to boolean
+function switchToBool(
+  value: number | undefined
+): boolean {
+  return !!value;
+}
+
+// Helper function to create a notification row
+function createNotificationRow(
+  label: string,
+  description: string,
+  name: string
+) {
+  return {
+    cols: [
+      {
+        view: "template",
+        borderless: true,
+        autoheight: true,
+        template: `
+          <div class='label-text'>${label}</div>
+          <div class='label-description'>${description}</div>
+        `,
+      },
+      {
+        view: "switch",
+        name: name,
+        width: 80,
+      },
+    ],
+  };
+}
+
+// Notification settings configuration
+const NOTIFICATION_SETTINGS = [
+  {
+    category: "Push Notifications",
+    settings: [
+      {
+        label: "Messages",
+        description:
+          "Messages from the people in your friend list",
+        name: "push_messages",
+      },
+      {
+        label: "Comments",
+        description:
+          "Comments on your posts and replies to your comments",
+        name: "push_comments",
+      },
+      {
+        label: "Reminders",
+        description:
+          "These are notifications to remind you of updates you might have missed",
+        name: "push_reminders",
+      },
+    ],
+  },
+  {
+    category: "Email Notifications",
+    settings: [
+      {
+        label: "News and Updates",
+        description:
+          "News about products and feature updates",
+        name: "email_news",
+      },
+      {
+        label: "Messages",
+        description:
+          "Messages from the people in your friend list",
+        name: "email_messages",
+      },
+      {
+        label: "Reminders",
+        description:
+          "These are notifications to remind you of updates you might have missed",
+        name: "email_reminders",
+      },
+    ],
+  },
+];
 
 export function getNotificationsView(webix: any) {
   return {
@@ -16,168 +107,22 @@ export function getNotificationsView(webix: any) {
           "<div class='category-title'>Notification Settings</div>",
         height: 50,
       },
-      {
-        view: "fieldset",
-        label: "Push Notifications",
-        body: {
-          rows: [
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `
-                    <div class='label-text'>Messages</div>
-                    <div class='label-description'>Messages from the people in your friend list</div>`,
-                },
-                {
-                  view: "switch",
-                  name: "push_messages",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>Messages from the people in your friend list</div>",
-            // },
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `<div class='label-text'>Comments</div>
-                                    <div class='label-description'>Comments on your posts and replies to your comments</div>`,
-                },
-                {
-                  view: "switch",
-                  name: "push_comments",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>Comments on your posts and replies to your comments</div>",
-            // },
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `<div class='label-text'>Reminders</div>
-                    <div class='label-description'>These are notifications to remind you of updates you might have missed</div>`,
-                },
-                {
-                  view: "switch",
-                  name: "push_reminders",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>These are notifications to remind you of updates you might have missed</div>",
-            // },
-          ],
-        },
-      },
-      {
-        view: "fieldset",
-        label: "Email Notifications",
-        body: {
-          rows: [
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `<div class='label-text'>News and Updates</div>
-                                    <div class='label-description'>News about products and feature updates</div>
-`,
-                },
-                {
-                  view: "switch",
-                  name: "email_news",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>News about products and feature updates</div>",
-            // },
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `<div class='label-text'>Messages</div>
-                                    <div class='label-description'>Messages from the people in your friend list</div>  `,
-                },
-                {
-                  view: "switch",
-                  name: "email_messages",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>Messages from the people in your friend list</div>",
-            // },
-            {
-              cols: [
-                {
-                  view: "template",
-                  borderless: true,
-                  autoheight: true,
-                  template: `<div class='label-text'>Reminders</div>
-                    <div class='label-description'>These are notifications to remind you of updates you might have missed</div>`,
-                },
-                {
-                  view: "switch",
-                  name: "email_reminders",
-                  width: 80,
-                },
-              ],
-            },
-            // {
-            //   view: "template",
-            //   css: "notification-desc",
-            //   borderless: true,
-            //   // autoheight: true,
-            //   template:
-            //     "<div class='label-description'>These are notifications to remind you of updates you might have missed</div>",
-            // },
-          ],
-        },
-      },
+      ...NOTIFICATION_SETTINGS.map(
+        (category) => ({
+          view: "fieldset",
+          label: category.category,
+          body: {
+            rows: category.settings.map(
+              (setting) =>
+                createNotificationRow(
+                  setting.label,
+                  setting.description,
+                  setting.name
+                )
+            ),
+          },
+        })
+      ),
       getSaveButton(
         webix,
         "notifications",
@@ -190,20 +135,23 @@ export function getNotificationsView(webix: any) {
               "Content-Type": "application/json",
             })
             .put(
-              `${API_BASE_URL}/users/1/notifications/update/`,
-              JSON.stringify({
-                push_messages:
-                  !!values.push_messages,
-                push_comments:
-                  !!values.push_comments,
-                push_reminders:
-                  !!values.push_reminders,
-                email_news: !!values.email_news,
-                email_messages:
-                  !!values.email_messages,
-                email_reminders:
-                  !!values.email_reminders,
-              })
+              `${API_BASE_URL}/users/${USER_ID}/notifications/update/`,
+              JSON.stringify(
+                NOTIFICATION_SETTINGS.reduce(
+                  (acc, category) => {
+                    category.settings.forEach(
+                      (setting) => {
+                        acc[setting.name] =
+                          switchToBool(
+                            values[setting.name]
+                          );
+                      }
+                    );
+                    return acc;
+                  },
+                  {} as Record<string, boolean>
+                )
+              )
             )
             .then((response: any) => {
               const data = response.json();
@@ -223,13 +171,11 @@ export function getNotificationsView(webix: any) {
     ],
     on: {
       onShow: function () {
-        console.log("khbajsndalksd,s");
-
         // Load notification settings from backend and populate the switches
         webix
           .ajax()
           .get(
-            `${API_BASE_URL}/users/1/notifications/`
+            `${API_BASE_URL}/users/${USER_ID}/notifications/`
           )
           .then((response: any) => {
             const data = response.json();
@@ -237,28 +183,25 @@ export function getNotificationsView(webix: any) {
 
             const form = this as any;
             if (form && form.setValues) {
-              form.setValues({
-                push_messages: data.push_messages
-                  ? 1
-                  : 0,
-                push_comments: data.push_comments
-                  ? 1
-                  : 0,
-                push_reminders:
-                  data.push_reminders ? 1 : 0,
-                email_news: data.email_news
-                  ? 1
-                  : 0,
-                email_messages:
-                  data.email_messages ? 1 : 0,
-                email_reminders:
-                  data.email_reminders ? 1 : 0,
-              });
+              const formValues =
+                NOTIFICATION_SETTINGS.reduce(
+                  (acc, category) => {
+                    category.settings.forEach(
+                      (setting) => {
+                        acc[setting.name] =
+                          boolToSwitch(
+                            data[setting.name]
+                          );
+                      }
+                    );
+                    return acc;
+                  },
+                  {} as Record<string, number>
+                );
+              form.setValues(formValues);
             }
           })
           .catch((err: any) => {
-            // Log but don't break the UI
-            // eslint-disable-next-line no-console
             console.error(
               "Failed to load notification settings",
               err

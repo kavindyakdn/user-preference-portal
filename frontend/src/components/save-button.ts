@@ -12,11 +12,13 @@ export function getSaveButton(
       const form = webix.$$(formId);
       if (form) {
         const values = form.getValues();
-        webix.message(successMessage);
         console.log("Form data:", values);
 
         if (onSave) {
           onSave(values);
+        } else {
+          // If no custom onSave handler, show success message immediately
+          webix.message(successMessage);
         }
       }
     },

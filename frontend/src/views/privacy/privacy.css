@@ -6,23 +6,7 @@
 }
 
 @media (max-width: 600px) {
-  .webix_el_label {
-    width: 100% !important;
-    margin-bottom: 4px;
-  }
-
   .webix_el_switch {
     justify-content: flex-start;
   }
-}
-
-.privacy-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.privacy-subtitle {
-  font-size: 13px;
-  color: #666;
 }

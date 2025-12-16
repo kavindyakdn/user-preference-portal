@@ -98,3 +98,13 @@ body[data-font="mono"] {
   justify-content: space-between;
   padding: 10px 0px;
 }
+
+.webix_el_radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+}

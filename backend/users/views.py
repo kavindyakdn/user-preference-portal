@@ -55,6 +55,40 @@ def update_user(request, pk: int):
     return JsonResponse(data)
 
 
+def update_profile_picture(request, pk: int):
+    """
+    Update profile picture for a user by user ID.
+    Expects multipart/form-data with 'profile_picture' file field.
+    """
+    if request.method not in ("POST", "PUT", "PATCH"):
+        return HttpResponseBadRequest("Unsupported method")
+
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        raise Http404("User not found")
+
+    # Check if file was uploaded (Webix uploader sends as "upload" by default)
+    if "upload" in request.FILES:
+        user.profile_picture = request.FILES["upload"]
+        user.save()
+    elif "file" in request.FILES:
+        user.profile_picture = request.FILES["file"]
+        user.save()
+    elif "profile_picture" in request.FILES:
+        user.profile_picture = request.FILES["profile_picture"]
+    user.save()
+
+    data = {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "profile_picture": user.profile_picture.url if user.profile_picture else None,
+    }
+    return JsonResponse(data)
+
+
 def get_notification_settings(request, pk: int):
     """Get notification settings for a user by user ID."""
     try:

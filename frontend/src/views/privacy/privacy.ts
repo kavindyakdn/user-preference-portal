@@ -2,6 +2,80 @@ import "./privacy.css";
 import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
 
+const USER_ID = 1;
+
+// Helper function to convert boolean to Webix switch value (1 or 0)
+function boolToSwitch(
+  value: boolean | undefined
+): number {
+  return value ? 1 : 0;
+}
+
+// Helper function to convert Webix switch value to boolean
+function switchToBool(
+  value: number | undefined
+): boolean {
+  return !!value;
+}
+
+// Helper function to create a switch row with label and description
+function createSwitchRow(
+  label: string,
+  description: string,
+  name: string
+) {
+  return {
+    cols: [
+      {
+        view: "template",
+        borderless: true,
+        autoheight: true,
+        template: `
+          <div class='label-text'>${label}</div>
+          <div class='label-description'>${description}</div>
+        `,
+      },
+      {
+        view: "switch",
+        name: name,
+        width: 80,
+      },
+    ],
+  };
+}
+
+// Privacy settings configuration
+const PRIVACY_SETTINGS = {
+  profileVisibility: {
+    fieldsetLabel: "Profile Visibility",
+    radioName: "profile_visibility",
+    radioOptions: [
+      { id: "public", value: "Public" },
+      { id: "friends", value: "Friends only" },
+      { id: "private", value: "Only me" },
+    ],
+    description:
+      "Control who can view your profile information across the platform.",
+  },
+  switches: [
+    {
+      fieldsetLabel: "Contact Information",
+      label: "Show my email to others",
+      description:
+        "Allow other users to see your email address on your profile",
+      name: "show_email",
+    },
+    {
+      fieldsetLabel: "Data Sharing",
+      label:
+        "Share usage data to improve the service",
+      description:
+        "Allow us to use anonymized data to improve features and performance.",
+      name: "data_sharing",
+    },
+  ],
+};
+
 export function getPrivacyView(webix: any) {
   return {
     view: "form",
@@ -22,28 +96,19 @@ export function getPrivacyView(webix: any) {
       },
       {
         view: "fieldset",
-        label: "Profile Visibility",
+        label:
+          PRIVACY_SETTINGS.profileVisibility
+            .fieldsetLabel,
         body: {
           rows: [
             {
               view: "radio",
-              name: "profile_visibility",
+              name: PRIVACY_SETTINGS
+                .profileVisibility.radioName,
               value: "public",
-              options: [
-                {
-                  id: "public",
-                  value: "Public",
-                },
-                {
-                  id: "friends",
-                  value: "Friends only",
-                },
-                {
-                  id: "private",
-                  value: "Only me",
-                },
-              ],
-              css: "privacy-radio",
+              options:
+                PRIVACY_SETTINGS.profileVisibility
+                  .radioOptions,
             },
             {
               view: "template",
@@ -51,54 +116,27 @@ export function getPrivacyView(webix: any) {
               borderless: true,
               autoheight: true,
               template:
-                "Control who can view your profile information across the platform.",
+                PRIVACY_SETTINGS.profileVisibility
+                  .description,
             },
           ],
         },
       },
-      {
-        view: "fieldset",
-        label: "Contact Information",
-        body: {
-          cols: [
-            {
-              view: "template",
-              borderless: true,
-              autoheight: true,
-              template: `<div class='label-text'>Show my email to others</div>
-                                    <div class='label-description'>Allow other users to see your email address on your profile</div>  `,
-            },
-            {
-              view: "switch",
-              name: "show_email",
-              width: 80,
-              // label: "Show my email to others",
-              // value: 0,
-            },
-          ],
-        },
-      },
-      {
-        view: "fieldset",
-        label: "Data Sharing",
-        body: {
-          cols: [
-            {
-              view: "template",
-              borderless: true,
-              autoheight: true,
-              template: `<div class='label-text'>Share usage data to improve the service</div>
-                                    <div class='label-description'>Allow us to use anonymized data to improve features and performance.</div>  `,
-            },
-            {
-              view: "switch",
-              name: "data_sharing",
-              // value: 0,
-              width: 80,
-            },
-          ],
-        },
-      },
+      ...PRIVACY_SETTINGS.switches.map(
+        (switchSetting) => ({
+          view: "fieldset",
+          label: switchSetting.fieldsetLabel,
+          body: {
+            cols: [
+              createSwitchRow(
+                switchSetting.label,
+                switchSetting.description,
+                switchSetting.name
+              ),
+            ],
+          },
+        })
+      ),
       getSaveButton(
         webix,
         "privacy",
@@ -111,13 +149,20 @@ export function getPrivacyView(webix: any) {
               "Content-Type": "application/json",
             })
             .put(
-              `${API_BASE_URL}/users/1/privacy/update/`,
+              `${API_BASE_URL}/users/${USER_ID}/privacy/update/`,
               JSON.stringify({
                 profile_visibility:
                   values.profile_visibility,
-                show_email: !!values.show_email,
-                data_sharing:
-                  !!values.data_sharing,
+                ...PRIVACY_SETTINGS.switches.reduce(
+                  (acc, switchSetting) => {
+                    acc[switchSetting.name] =
+                      switchToBool(
+                        values[switchSetting.name]
+                      );
+                    return acc;
+                  },
+                  {} as Record<string, boolean>
+                ),
               })
             )
             .then((response: any) => {
@@ -141,24 +186,34 @@ export function getPrivacyView(webix: any) {
         // Load privacy settings from backend and populate the form
         webix
           .ajax()
-          .get(`${API_BASE_URL}/users/1/privacy/`)
+          .get(
+            `${API_BASE_URL}/users/${USER_ID}/privacy/`
+          )
           .then((response: any) => {
             const data = response.json();
             if (!data) return;
 
             const form = this as any;
             if (form && form.setValues) {
-              form.setValues({
+              const formValues: Record<
+                string,
+                any
+              > = {
                 profile_visibility:
                   data.profile_visibility ||
                   "public",
-                show_email: data.show_email
-                  ? 1
-                  : 0,
-                data_sharing: data.data_sharing
-                  ? 1
-                  : 0,
-              });
+              };
+
+              PRIVACY_SETTINGS.switches.forEach(
+                (switchSetting) => {
+                  formValues[switchSetting.name] =
+                    boolToSwitch(
+                      data[switchSetting.name]
+                    );
+                }
+              );
+
+              form.setValues(formValues);
             }
           })
           .catch((err: any) => {

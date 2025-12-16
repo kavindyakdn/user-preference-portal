@@ -2,6 +2,39 @@ import "./account.css";
 import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
 
+const USER_ID = 1;
+
+// Helper function to construct full URL for profile picture
+function getProfilePictureUrl(
+  relativeUrl: string | null
+): string {
+  if (!relativeUrl) return "";
+  if (relativeUrl.startsWith("http"))
+    return relativeUrl;
+  const baseUrl = API_BASE_URL.replace(
+    "/api",
+    ""
+  );
+  return `${baseUrl}${relativeUrl}`;
+}
+
+// Helper function to update profile picture in template using Webix data binding
+function updateProfilePicture(
+  webix: any,
+  imageUrl: string | null
+) {
+  const template = webix.$$(
+    "profilePhotoTemplate"
+  );
+  if (template) {
+    const fullUrl =
+      getProfilePictureUrl(imageUrl);
+    template.setValues({
+      profilePictureUrl: fullUrl,
+    });
+  }
+}
+
 export function getAccountView(webix: any) {
   return {
     view: "form",
@@ -16,130 +49,102 @@ export function getAccountView(webix: any) {
         height: 50,
       },
       {
-        view: "template",
-        template: `
-          <div class="profile-photo-container">
-            <div class="profile-photo-wrapper">
-              <div id="profilePhoto" class="profile-photo">
-                <div class="profile-photo-add-button">
-                  <span>+</span>
-                </div>
-              </div>
-              <input type="file" id="photoInput" accept="image/*" class="photo-input" />
-            </div>
-          </div>
-        `,
-        height: 180,
-        on: {
-          onAfterRender: function () {
-            console.log(
-              "profile photo template rendered"
-            );
-
-            // Wire up profile photo click / upload
-            const photoDiv =
-              document.getElementById(
-                "profilePhoto"
-              );
-            const photoInput =
-              document.getElementById(
-                "photoInput"
-              ) as HTMLInputElement;
-
-            if (photoDiv && photoInput) {
-              photoDiv.addEventListener(
-                "click",
-                () => {
-                  photoInput.click();
-                }
-              );
-
-              photoInput.addEventListener(
-                "change",
-                (e: Event) => {
-                  const target =
-                    e.target as HTMLInputElement;
-                  if (
-                    target.files &&
-                    target.files[0]
-                  ) {
-                    const reader =
-                      new FileReader();
-                    reader.onload = function (
-                      event: ProgressEvent<FileReader>
-                    ) {
-                      if (
-                        event.target &&
-                        event.target.result
-                      ) {
-                        const img =
-                          document.createElement(
-                            "img"
-                          );
-                        img.src = event.target
-                          .result as string;
-
-                        const existingImg =
-                          photoDiv.querySelector(
-                            "img"
-                          );
-                        if (existingImg) {
-                          photoDiv.removeChild(
-                            existingImg
-                          );
-                        }
-                        photoDiv.insertBefore(
-                          img,
-                          photoDiv.firstChild
-                        );
-
-                        webix.message(
-                          "Profile photo updated"
-                        );
+        rows: [
+          {
+            view: "template",
+            id: "profilePhotoTemplate",
+            template: function (obj: any) {
+              const imageUrl =
+                obj.profilePictureUrl || "";
+              const hasImage =
+                imageUrl && imageUrl.length > 0;
+              return `
+                <div class="profile-photo-container">
+                  <div class="profile-photo-wrapper">
+                    <div class="profile-photo">
+                      ${
+                        hasImage
+                          ? `<img src="${imageUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
+                          : `<div class="profile-photo-add-button"><span>+</span></div>`
                       }
-                    };
-                    reader.readAsDataURL(
-                      target.files[0]
-                    );
-                  }
-                }
-              );
-            }
-
-            // Fetch user data from backend API and populate the form
-            console.log(
-              "loading user data from API..."
-            );
-            webix
-              .ajax()
-              .get(`${API_BASE_URL}/users/1/`)
-              .then((response: any) => {
-                const data = response.json();
-                console.log(
-                  "user data response",
-                  data
-                );
-                if (data) {
-                  const form = webix.$$(
-                    "account"
-                  ) as any;
-                  if (form && form.setValues) {
-                    form.setValues({
-                      email: data.email,
-                      firstName: data.first_name,
-                      lastName: data.last_name,
-                    });
-                  }
-                }
-              })
-              .catch((err: any) => {
-                console.error(
-                  "Failed to load user data",
-                  err
-                );
-              });
+                    </div>
+                  </div>
+                </div>
+              `;
+            },
+            height: 180,
+            borderless: true,
+            data: {
+              profilePictureUrl: "",
+            },
           },
-        },
+          {
+            view: "uploader",
+            id: "profilePhotoUploader",
+            value: "Upload photo",
+            accept: "image/*",
+            autosend: true,
+            multiple: false,
+            upload: `${API_BASE_URL}/users/${USER_ID}/profile-picture/`,
+            link: "profilePhotoTemplate",
+            on: {
+              onAfterFileAdd: function (
+                file: any
+              ) {
+                // Show preview immediately using FileReader
+                if (file && file.file) {
+                  const reader = new FileReader();
+                  reader.onload = function (
+                    event: ProgressEvent<FileReader>
+                  ) {
+                    if (
+                      event.target &&
+                      event.target.result
+                    ) {
+                      updateProfilePicture(
+                        webix,
+                        event.target
+                          .result as string
+                      );
+                    }
+                  };
+                  reader.readAsDataURL(
+                    file.file as File
+                  );
+                }
+              },
+              onFileUpload: function (
+                response: any
+              ) {
+                webix.message(
+                  "Profile photo updated"
+                );
+                const data = response.json();
+                if (
+                  data &&
+                  data.profile_picture
+                ) {
+                  updateProfilePicture(
+                    webix,
+                    data.profile_picture
+                  );
+                }
+              },
+              onFileUploadError: function (
+                error: any
+              ) {
+                console.error(
+                  "Failed to upload profile photo",
+                  error
+                );
+                webix.message(
+                  "Failed to upload profile photo",
+                  "error"
+                );
+              },
+            },
+          },
+        ],
       },
       {
         view: "text",
@@ -174,7 +179,7 @@ export function getAccountView(webix: any) {
               "Content-Type": "application/json",
             })
             .put(
-              `${API_BASE_URL}/users/1/update/`,
+              `${API_BASE_URL}/users/${USER_ID}/update/`,
               JSON.stringify({
                 email: values.email,
                 first_name: values.firstName,
@@ -198,6 +203,41 @@ export function getAccountView(webix: any) {
       email: webix.rules.isNotEmpty,
       firstName: webix.rules.isNotEmpty,
       lastName: webix.rules.isNotEmpty,
+    },
+    on: {
+      onShow: function () {
+        // Load user data from backend API and populate the form
+        webix
+          .ajax()
+          .get(
+            `${API_BASE_URL}/users/${USER_ID}/`
+          )
+          .then((response: any) => {
+            const data = response.json();
+            if (!data) return;
+
+            const form = this as any;
+            if (form && form.setValues) {
+              form.setValues({
+                email: data.email,
+                firstName: data.first_name,
+                lastName: data.last_name,
+              });
+            }
+
+            // Load profile picture using Webix data binding
+            updateProfilePicture(
+              webix,
+              data.profile_picture
+            );
+          })
+          .catch((err: any) => {
+            console.error(
+              "Failed to load user data",
+              err
+            );
+          });
+      },
     },
   };
 }

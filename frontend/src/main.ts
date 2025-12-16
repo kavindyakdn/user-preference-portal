@@ -139,6 +139,14 @@ function createUI(webix: any) {
               privacyView.callEvent("onShow", []);
             }
           }
+
+          // When Account is selected, explicitly trigger its onShow handler
+          if (id === "account") {
+            const accountView = webix.$$("account");
+            if (accountView) {
+              accountView.callEvent("onShow", []);
+            }
+          }
         }),
       },
       {

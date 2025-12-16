@@ -1,6 +1,11 @@
 import "./theme.css";
+import "../style.css";
 import { API_BASE_URL } from "../config";
 import { getSaveButton } from "../components/save-button";
+
+const USER_ID = 1;
+const DEFAULT_PRIMARY_COLOR = "default";
+const DEFAULT_COLOR_VALUE = "#4b7bec";
 
 // Function to dynamically load Webix skin CSS
 export function loadWebixSkin(
@@ -27,10 +32,7 @@ export function loadWebixSkin(
       primaryColor &&
       primaryColor !== "default"
     ) {
-      applyPrimaryColorToWebix(
-        primaryColor,
-        skin
-      );
+      applyPrimaryColorToWebix(primaryColor);
     }
   };
 
@@ -42,14 +44,13 @@ export function loadWebixSkin(
     primaryColor !== "default" &&
     link.sheet
   ) {
-    applyPrimaryColorToWebix(primaryColor, skin);
+    applyPrimaryColorToWebix(primaryColor);
   }
 }
 
 // Function to apply primary color to Webix components
 export function applyPrimaryColorToWebix(
-  primaryColor: string,
-  skin?: string
+  primaryColor: string
 ) {
   // If primaryColor is "default", remove any custom color overrides
   // and let the skin's native CSS handle the colors
@@ -65,8 +66,6 @@ export function applyPrimaryColorToWebix(
   }
 
   // If not "default", apply the custom color
-  const colorToApply = primaryColor;
-
   // Remove existing custom color style if any
   const existingStyle = document.getElementById(
     "webix-custom-color"
@@ -82,52 +81,52 @@ export function applyPrimaryColorToWebix(
     /* Override Webix primary colors with custom color */
     .webix_button,
     .webix_el_button button {
-      background-color: ${colorToApply} !important;
-      border-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
+      border-color: ${primaryColor} !important;
     }
     
     .webix_button:hover,
     .webix_el_button button:hover {
-      background-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
       opacity: 0.9;
     }
     
     .webix_selected,
     .webix_list_item.webix_selected,
     .webix_menu_item.webix_selected {
-      background-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
     }
     
     .webix_menu_item.webix_selected .webix_icon {
-      color: ${colorToApply} !important;
+      color: ${primaryColor} !important;
     }
     
     .webix_segment_0.webix_selected,
     .webix_segment_1.webix_selected {
-      background-color: ${colorToApply} !important;
-      border-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
+      border-color: ${primaryColor} !important;
     }
     
     .webix_radio_icon.webix_radio_checked {
-      background-color: ${colorToApply} !important;
-      border-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
+      border-color: ${primaryColor} !important;
     }
     
     .webix_switch_on {
-      background-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
     }
     
     .webix_header .webix_header_content {
-      background-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
     }
     
     .webix_toolbar .webix_img_btn:hover {
-      background-color: ${colorToApply} !important;
+      background-color: ${primaryColor} !important;
     }
     
     /* Apply to CSS variable as well */
     :root {
-      --app-primary-color: ${colorToApply};
+      --app-primary-color: ${primaryColor};
     }
   `;
   document.head.appendChild(style);
@@ -227,6 +226,7 @@ export function getThemeView(webix: any) {
               view: "radio",
               name: "skin",
               value: "material",
+              customRadio: true,
               options: [
                 {
                   id: "material",
@@ -249,21 +249,34 @@ export function getThemeView(webix: any) {
                 onChange: function (
                   value: string
                 ) {
-                  // When skin changes, set primary color to "default"
+                  // When skin changes, reset primary color to "default"
                   const form = webix.$$(
                     "theme"
                   ) as any;
                   if (form) {
-                    // Update hidden field to track primary_color
-                    const colorInput =
-                      document.getElementById(
-                        "primaryColorValue"
-                      ) as HTMLInputElement | null;
-                    if (colorInput) {
-                      colorInput.value =
-                        "default";
-                    }
+                    form.setValues(
+                      {
+                        primary_color:
+                          DEFAULT_PRIMARY_COLOR,
+                        font_family: "default",
+                      },
+                      true
+                    );
                   }
+                  const picker = webix.$$(
+                    "primaryColorPicker"
+                  ) as any;
+                  if (picker) {
+                    picker.setValue(
+                      DEFAULT_COLOR_VALUE
+                    );
+                  }
+                  applyPrimaryColorToWebix(
+                    DEFAULT_PRIMARY_COLOR
+                  );
+                  applyFontFamilyToWebix(
+                    "default"
+                  );
 
                   // Load skin with default color (don't apply custom colors)
                   loadWebixSkin(value);
@@ -279,118 +292,96 @@ export function getThemeView(webix: any) {
         body: {
           rows: [
             {
-              view: "template",
-              height: 100,
-              template: `
-                <div class="label-container">
-                  <div class="theme-color-text">
-                    <div class="label-text">Primary color</div>
-                    <div class="label-description">
-                      This accent color is used for highlights and primary actions.
+              cols: [
+                {
+                  view: "template",
+                  borderless: true,
+                  autoheight: true,
+                  template: `
+                    <div class='theme-color-text'>
+                      <div class='label-text'>Primary color</div>
+                      <div class='label-description'>
+                        This accent color is used for highlights and primary actions.
+                      </div>
                     </div>
-                  </div>
-                  <div class="theme-color-picker-wrapper" id="themeColorPickerWrapper">
-                    <input id="themeColorPicker" type="color" value="#4b7bec" />
-                    <div id="defaultColorText" style="display: none; padding: 8px 12px; background: #f5f5f5; border-radius: 4px; color: #666; font-size: 13px;">
-                      Default
-                    </div>
-                    <input type="hidden" id="primaryColorValue" value="default" />
-                  </div>
-                </div>
-              `,
-              on: {
-                onAfterRender: function () {
-                  const input =
-                    document.getElementById(
-                      "themeColorPicker"
-                    ) as HTMLInputElement | null;
-                  const defaultText =
-                    document.getElementById(
-                      "defaultColorText"
-                    );
-                  const colorPickerWrapper =
-                    document.getElementById(
-                      "themeColorPickerWrapper"
-                    );
-
-                  if (
-                    input &&
-                    defaultText &&
-                    colorPickerWrapper
-                  ) {
-                    // Show color picker when clicked on default text
-                    defaultText.addEventListener(
-                      "click",
-                      () => {
-                        defaultText.style.display =
-                          "none";
-                        input.style.display =
-                          "block";
-                        input.click();
-                      }
-                    );
-
-                    input.onchange = (e) => {
-                      const target =
-                        e.target as HTMLInputElement;
-                      const color =
-                        target.value || "#4b7bec";
-
-                      // Update hidden field
-                      const colorValue =
-                        document.getElementById(
-                          "primaryColorValue"
-                        ) as HTMLInputElement | null;
-                      if (colorValue) {
-                        colorValue.value = color;
-                      }
-
-                      // Apply color to Webix components
-                      const form = webix.$$(
-                        "theme"
-                      ) as any;
-                      const skinValue =
-                        form?.getValues()?.skin ||
-                        "material";
-                      applyPrimaryColorToWebix(
-                        color,
-                        skinValue
-                      );
-                    };
-
-                    input.oninput = (e) => {
-                      const target =
-                        e.target as HTMLInputElement;
-                      const color =
-                        target.value || "#4b7bec";
-
-                      // Update hidden field
-                      const colorValue =
-                        document.getElementById(
-                          "primaryColorValue"
-                        ) as HTMLInputElement | null;
-                      if (colorValue) {
-                        colorValue.value = color;
-                      }
-
-                      // Apply color to Webix components
-                      const form = webix.$$(
-                        "theme"
-                      ) as any;
-                      const skinValue =
-                        form?.getValues()?.skin ||
-                        "material";
-                      applyPrimaryColorToWebix(
-                        color,
-                        skinValue
-                      );
-                    };
-                  }
+                  `,
                 },
-              },
+                {
+                  rows: [
+                    {
+                      view: "colorpicker",
+                      id: "primaryColorPicker",
+                      name: "primary_color_picker",
+                      stringResult: true,
+                      value: DEFAULT_COLOR_VALUE,
+                      on: {
+                        onChange: function (
+                          value: string
+                        ) {
+                          const form =
+                            (
+                              this as any
+                            ).getFormView?.() ||
+                            webix.$$("theme");
+                          if (form) {
+                            form.setValues(
+                              {
+                                primary_color:
+                                  value,
+                              },
+                              true
+                            );
+                          }
+                          applyPrimaryColorToWebix(
+                            value
+                          );
+                        },
+                      },
+                    },
+                    {
+                      view: "button",
+                      value: "Use default",
+                      css: "webix_secondary",
+                      click: function () {
+                        const form =
+                          (
+                            this as any
+                          ).getFormView?.() ||
+                          webix.$$("theme");
+                        if (form) {
+                          form.setValues(
+                            {
+                              primary_color:
+                                DEFAULT_PRIMARY_COLOR,
+                            },
+                            true
+                          );
+                        }
+                        const picker = webix.$$(
+                          "primaryColorPicker"
+                        ) as any;
+                        if (picker) {
+                          picker.setValue(
+                            DEFAULT_COLOR_VALUE
+                          );
+                        }
+                        applyPrimaryColorToWebix(
+                          DEFAULT_PRIMARY_COLOR
+                        );
+                      },
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
+      },
+      {
+        view: "text",
+        name: "primary_color",
+        hidden: true,
+        value: DEFAULT_PRIMARY_COLOR,
       },
       {
         view: "fieldset",
@@ -415,10 +406,6 @@ export function getThemeView(webix: any) {
                       id: "default",
                       value: "Default",
                     },
-                    // {
-                    //   id: "system",
-                    //   value: "System default",
-                    // },
                     {
                       id: "sans",
                       value: "Sans Serif",
@@ -454,13 +441,11 @@ export function getThemeView(webix: any) {
         "theme",
         "Theme settings saved",
         (values: any) => {
-          // Get primary color from hidden field (could be "default" or a hex color)
-          const colorValue =
-            document.getElementById(
-              "primaryColorValue"
-            ) as HTMLInputElement | null;
+          // Get primary color from form state (could be "default" or a hex color)
           const primaryColor =
-            colorValue?.value || "default";
+            values.primary_color ||
+            values.primary_color_picker ||
+            DEFAULT_PRIMARY_COLOR;
 
           // Call backend API to update theme settings
           webix
@@ -469,7 +454,7 @@ export function getThemeView(webix: any) {
               "Content-Type": "application/json",
             })
             .put(
-              `${API_BASE_URL}/users/1/theme/update/`,
+              `${API_BASE_URL}/users/${USER_ID}/theme/update/`,
               JSON.stringify({
                 skin: values.skin,
                 primary_color: primaryColor,
@@ -478,12 +463,31 @@ export function getThemeView(webix: any) {
             )
             .then((response: any) => {
               const data = response.json();
+              const savedPrimaryColor =
+                data.primary_color ||
+                DEFAULT_PRIMARY_COLOR;
+              const savedSkin =
+                data.skin || "material";
+              loadWebixSkin(
+                savedSkin,
+                savedPrimaryColor !==
+                  DEFAULT_PRIMARY_COLOR
+                  ? savedPrimaryColor
+                  : undefined
+              );
+              applyPrimaryColorToWebix(
+                savedPrimaryColor
+              );
+              applyFontFamilyToWebix(
+                data.font_family || "default"
+              );
               console.log(
                 "Theme settings updated:",
                 data
               );
-              // Refresh the page to apply theme changes globally
-              window.location.reload();
+              webix.message(
+                "Theme settings updated"
+              );
             })
             .catch((err: any) => {
               console.error(
@@ -499,65 +503,61 @@ export function getThemeView(webix: any) {
         // Load theme settings from backend and populate the form
         webix
           .ajax()
-          .get(`${API_BASE_URL}/users/1/theme/`)
+          .get(
+            `${API_BASE_URL}/users/${USER_ID}/theme/`
+          )
           .then((response: any) => {
             const data = response.json();
             if (!data) return;
 
             const form = this as any;
             if (form && form.setValues) {
-              // Get color picker value
-              const colorPicker =
-                document.getElementById(
-                  "themeColorPicker"
-                ) as HTMLInputElement | null;
-              if (
-                colorPicker &&
-                data.primary_color
-              ) {
-                colorPicker.value =
-                  data.primary_color;
+              const primaryColor =
+                data.primary_color ||
+                DEFAULT_PRIMARY_COLOR;
+
+              form.setValues(
+                {
+                  skin: data.skin || "material",
+                  font_family:
+                    data.font_family || "default",
+                  primary_color: primaryColor,
+                },
+                true
+              );
+
+              const picker = webix.$$(
+                "primaryColorPicker"
+              ) as any;
+              if (picker) {
+                picker.setValue(
+                  primaryColor ===
+                    DEFAULT_PRIMARY_COLOR
+                    ? DEFAULT_COLOR_VALUE
+                    : primaryColor
+                );
               }
 
-              form.setValues({
-                skin: data.skin || "material",
-                font_family:
-                  data.font_family || "default",
-              });
-
-              // Load the skin CSS with primary color
+              // Load the skin CSS with primary color (skip custom if default)
               if (data.skin) {
-                if (
-                  data.primary_color ===
-                    "default" ||
-                  !data.primary_color
-                ) {
-                  // Load skin without custom colors (use skin defaults)
-                  loadWebixSkin(data.skin);
-                } else {
-                  // Load skin with custom primary color
-                  loadWebixSkin(
-                    data.skin,
-                    data.primary_color
-                  );
-                }
+                loadWebixSkin(
+                  data.skin,
+                  primaryColor !==
+                    DEFAULT_PRIMARY_COLOR
+                    ? primaryColor
+                    : undefined
+                );
+              } else {
+                loadWebixSkin("material");
               }
 
-              // Apply font family to Webix components
+              // Apply font family and primary color to Webix components
               applyFontFamilyToWebix(
                 data.font_family || "default"
               );
-
-              // Apply primary color if not "default"
-              if (
-                data.primary_color &&
-                data.primary_color !== "default"
-              ) {
-                applyPrimaryColorToWebix(
-                  data.primary_color,
-                  data.skin
-                );
-              }
+              applyPrimaryColorToWebix(
+                primaryColor
+              );
             }
           })
           .catch((err: any) => {
