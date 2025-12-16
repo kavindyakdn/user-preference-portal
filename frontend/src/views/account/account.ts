@@ -3,6 +3,8 @@ import { API_BASE_URL } from "../../config";
 import { getSaveButton } from "../../components/save-button";
 
 const USER_ID = 1;
+const DEFAULT_ERROR =
+  "Failed to process your request. Please try again.";
 
 // Helper function to construct full URL for profile picture
 function getProfilePictureUrl(
@@ -33,6 +35,33 @@ function updateProfilePicture(
       profilePictureUrl: fullUrl,
     });
   }
+}
+
+function extractErrorMessage(
+  err: any,
+  fallback: string
+) {
+  try {
+    const text =
+      err?.responseText ||
+      err?.response ||
+      err?.statusText;
+    if (text) {
+      try {
+        const parsed = JSON.parse(text);
+        return (
+          parsed?.error?.message ||
+          parsed?.message ||
+          fallback
+        );
+      } catch {
+        return text;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return fallback;
 }
 
 export function getAccountView(webix: any) {
@@ -339,7 +368,10 @@ export function getAccountView(webix: any) {
                 err
               );
               webix.message(
-                "Failed to update account settings",
+                extractErrorMessage(
+                  err,
+                  DEFAULT_ERROR
+                ),
                 "error"
               );
             });

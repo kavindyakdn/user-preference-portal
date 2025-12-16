@@ -1,7 +1,23 @@
 import json
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.validators import EmailValidator
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from .models import User, UserNotificationSettings, UserThemeSettings, UserPrivacySettings
+
+
+def bad_request(message: str, code: str = None, fields: dict = None):
+    return JsonResponse(
+        {
+            "error": {
+                "message": message,
+                "code": code,
+                "fields": fields or {},
+            }
+        },
+        status=400,
+    )
 
 
 def get_user(request, pk: int):
@@ -26,13 +42,13 @@ def update_user(request, pk: int):
     Expects JSON body with any of: email, first_name, last_name.
     """
     if request.method not in ("PUT", "PATCH", "POST"):
-        return HttpResponseBadRequest("Unsupported method")
+        return bad_request("Unsupported method", code="unsupported_method")
 
     try:
         body = request.body.decode() or "{}"
         payload = json.loads(body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return bad_request("Invalid JSON", code="invalid_json")
 
     try:
         user = User.objects.get(pk=pk)
@@ -42,9 +58,18 @@ def update_user(request, pk: int):
     # Update allowed fields if present
     for field in ("email", "first_name", "last_name"):
         if field in payload:
+            if field == "email":
+                validator = EmailValidator()
+                try:
+                    validator(payload[field])
+                except ValidationError:
+                    return bad_request("Invalid email address", code="invalid_email")
             setattr(user, field, payload[field])
 
-    user.save()
+    try:
+        user.save()
+    except IntegrityError:
+        return bad_request("Email already in use", code="duplicate_email")
 
     data = {
         "id": user.id,
@@ -62,7 +87,7 @@ def update_profile_picture(request, pk: int):
     Expects multipart/form-data with 'profile_picture' file field.
     """
     if request.method not in ("POST", "PUT", "PATCH"):
-        return HttpResponseBadRequest("Unsupported method")
+        return bad_request("Unsupported method", code="unsupported_method")
 
     try:
         user = User.objects.get(pk=pk)
@@ -72,12 +97,13 @@ def update_profile_picture(request, pk: int):
     # Check if file was uploaded (Webix uploader sends as "upload" by default)
     if "upload" in request.FILES:
         user.profile_picture = request.FILES["upload"]
-        user.save()
     elif "file" in request.FILES:
         user.profile_picture = request.FILES["file"]
-        user.save()
     elif "profile_picture" in request.FILES:
         user.profile_picture = request.FILES["profile_picture"]
+    else:
+        return bad_request("No file uploaded", code="missing_file")
+
     user.save()
 
     data = {
@@ -129,13 +155,13 @@ def update_notification_settings(request, pk: int):
     email_news, email_messages, email_reminders.
     """
     if request.method not in ("PUT", "PATCH", "POST"):
-        return HttpResponseBadRequest("Unsupported method")
+        return bad_request("Unsupported method", code="unsupported_method")
 
     try:
         body = request.body.decode() or "{}"
         payload = json.loads(body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return bad_request("Invalid JSON", code="invalid_json")
 
     try:
         user = User.objects.get(pk=pk)
@@ -210,13 +236,13 @@ def update_theme_settings(request, pk: int):
     Expects JSON body with any of: skin, primary_color, font_family.
     """
     if request.method not in ("PUT", "PATCH", "POST"):
-        return HttpResponseBadRequest("Unsupported method")
+        return bad_request("Unsupported method", code="unsupported_method")
 
     try:
         body = request.body.decode() or "{}"
         payload = json.loads(body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return bad_request("Invalid JSON", code="invalid_json")
 
     try:
         user = User.objects.get(pk=pk)
@@ -282,13 +308,13 @@ def update_privacy_settings(request, pk: int):
     Expects JSON body with any of: profile_visibility, show_email, data_sharing.
     """
     if request.method not in ("PUT", "PATCH", "POST"):
-        return HttpResponseBadRequest("Unsupported method")
+        return bad_request("Unsupported method", code="unsupported_method")
 
     try:
         body = request.body.decode() or "{}"
         payload = json.loads(body)
     except json.JSONDecodeError:
-        return HttpResponseBadRequest("Invalid JSON")
+        return bad_request("Invalid JSON", code="invalid_json")
 
     try:
         user = User.objects.get(pk=pk)
@@ -362,10 +388,10 @@ def update_password(request, pk: int):
         raise Http404("User not found")
 
     if not user.password:
-        return HttpResponseBadRequest("No existing password set")
+        return bad_request("No existing password set", code="no_password")
 
     if not check_password(current_password, user.password):
-        return HttpResponseBadRequest("Current password is incorrect")
+        return bad_request("Current password is incorrect", code="incorrect_current_password")
 
     user.password = make_password(new_password)
     user.save()
