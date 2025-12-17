@@ -1,3 +1,3 @@
-from django.test import TestCase
-
-# Create your tests here.
+"""
+Deprecated placeholder. Tests now live under backend/users/tests/.
+"""
