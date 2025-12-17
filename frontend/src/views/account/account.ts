@@ -7,7 +7,7 @@ const DEFAULT_ERROR =
   "Failed to process your request. Please try again.";
 
 // Helper function to construct full URL for profile picture
-function getProfilePictureUrl(
+export function getProfilePictureUrl(
   relativeUrl: string | null
 ): string {
   if (!relativeUrl) return "";
@@ -21,7 +21,7 @@ function getProfilePictureUrl(
 }
 
 // Helper function to update profile picture in template using Webix data binding
-function updateProfilePicture(
+export function updateProfilePicture(
   webix: any,
   imageUrl: string | null
 ) {
@@ -37,7 +37,7 @@ function updateProfilePicture(
   }
 }
 
-function extractErrorMessage(
+export function extractErrorMessage(
   err: any,
   fallback: string
 ) {
@@ -93,8 +93,8 @@ export function getAccountView(webix: any) {
                     <div class="profile-photo">
                       ${
                         hasImage
-                          ? `<img src="${imageUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
-                          : `<div class="profile-photo-add-button"><span>+</span></div>`
+                          ? `<img src="${imageUrl}" alt="Profile photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
+                          : `<div class="profile-photo-add-button" aria-label="Add profile photo" role="button"><span>+</span></div>`
                       }
                     </div>
                   </div>
